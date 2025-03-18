@@ -1,0 +1,19 @@
+virtual_dev_pod/
+├── .env                  # Environment variables
+├── app.py                # Streamlit application
+├── agents/               # Agent definitions
+│   ├── __init__.py
+│   ├── project_lead.py
+│   ├── business_analyst.py
+│   ├── designer.py
+│   ├── developer.py
+│   └── tester.py
+├── templates/            # Artifact templates
+│   ├── user_story.md
+│   ├── design_doc.md
+│   ├── code_template.py
+│   └── test_case.md
+├── database/             # ChromaDB setup
+│   └── db_manager.py
+└── utils/                # Utility functions
+    └── helpers.py
