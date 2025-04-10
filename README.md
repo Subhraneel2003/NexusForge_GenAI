@@ -239,4 +239,5 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - CrewAI for the multi-agent framework
 - LangChain for LLM integration capabilities
 - Streamlit for the interactive UI framework
+- ChromaDB for vector database
 - Google for Gemini model access
