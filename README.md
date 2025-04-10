@@ -1,141 +1,221 @@
 # 🤖 NexusForge: Advanced AI Development Framework
 
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Python](https://img.shields.io/badge/python-3.9%2B-green.svg)
+
 ## Overview
 
-NexusForge is a Streamlit application that simulates a complete software development team using AI agents. Each agent specializes in a different role of the software development lifecycle, allowing you to rapidly prototype and develop software projects with minimal human intervention.
+NexusForge is a comprehensive development framework designed to orchestrate multiple AI agents collaboratively on complex tasks within a unified ecosystem. The system leverages the CrewAI architecture to enable specialized AI agents to work in concert, each contributing unique capabilities to solve multi-faceted development challenges.
+
+By simulating a virtual development pod, NexusForge streamlines the software development lifecycle from project initialization through testing and review, creating an intelligent, collaborative development environment.
 
 ## Features
 
-- **Complete Development Lifecycle**: Takes projects from initial requirements through design, development, testing, and review phases
-- **Specialized AI Agents**: Utilizes AI agents for different roles including Project Lead, Business Analyst, Designer, Developer, and Tester
-- **Interactive Interface**: Streamlit-based UI that allows for real-time interaction and feedback at each development phase
-- **Artifact Management**: Automatically generates and manages development artifacts throughout the project lifecycle
-- **Chat Interface**: Direct communication with the Project Lead agent for questions and guidance
+- **Multi-Agent Collaboration**: Orchestrates specialized AI agents working together on software projects
+- **Full SDLC Support**: Covers the entire software development lifecycle from requirements to testing
+- **Interactive UI**: Built with Streamlit for easy project management and visualization
+- **Knowledge Management**: Stores and retrieves project artifacts with ChromaDB
+- **Phase-Based Workflow**: Structured approach to software development processes
 
-## Installation
-
-### Prerequisites
-
-- Python 3.8 or higher
-- pip package manager
-### Setup
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/ai-virtual-development-pod.git
-   cd ai-virtual-development-pod
-   ```
-
-2. Create a virtual environment (optional but recommended):
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
-
-3. Install the required dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. Create a `.env` file in the project root with your API keys:
-   ```
-   GEMINI_API_KEY=your_gemini_api_key
-   ```
-
-## Usage
-
-1. Start the application:
-   ```bash
-   streamlit run app.py
-   ```
-
-2. The application will open in your default web browser at `http://localhost:8501`
-
-3. Navigate through the different tabs and phases of development:
-   - **Project Management**: Guide the project through each development phase
-   - **Artifacts**: View and download generated project artifacts
-   - **Chat**: Communicate directly with the Project Lead agent
-
-## Development Workflow
-
-1. **Initialization Phase**:
-   - Enter project name, description, and business requirements
-   - The Project Lead agent will generate an initial project outline
-
-2. **Requirements Analysis Phase**:
-   - The Business Analyst agent generates user stories based on the project outline
-   - Provide feedback to refine the user stories as needed
-
-3. **Design Phase**:
-   - The Designer agent creates a comprehensive design document
-   - Review and provide feedback to refine the design
-
-4. **Development Phase**:
-   - The Developer agent generates code implementation based on design and requirements
-   - Review and provide feedback to improve the code
-
-5. **Testing Phase**:
-   - The Tester agent creates a test plan and executes tests against the implementation
-   - Review test results and address any issues
-
-6. **Review Phase**:
-   - The Project Lead agent provides a comprehensive project review
-   - Start a new project or continue refining the current one
-
-## Project Structure
+## Project Architecture
 
 ```
-virtual_dev_pod/
+NexusForge_GENAI/
 ├── .env                  # Environment variables
 ├── app.py                # Streamlit application
 ├── agents/               # Agent definitions
-│   ├── __init__.py
-│   ├── project_lead.py
-│   ├── business_analyst.py
-│   ├── designer.py
-│   ├── developer.py
-│   └── tester.py
+│   ├── __init__.py       # Base agent class
+│   ├── project_lead.py   # Project Lead agent
+│   ├── business_analyst.py # Business Analyst agent
+│   ├── designer.py       # Designer agent
+│   ├── developer.py      # Developer agent
+│   └── tester.py         # Tester agent
 ├── templates/            # Artifact templates
-│   ├── user_story.md
-│   ├── design_doc.md
-│   ├── code_template.py
-│   └── test_case.md
+│   ├── user_story.md     # Template for user stories
+│   ├── design_doc.md     # Template for design documents
+│   ├── code_template.py  # Template for code implementation
+│   └── test_case.md      # Template for test cases
 ├── database/             # ChromaDB setup
-│   └── db_manager.py
+│   └── db_manager.py     # Database manager for artifact storage
 └── utils/                # Utility functions
-    └── helpers.py
+    └── helpers.py        # Helper functions for artifact management
 ```
 
-## Customization
+## Tech Stack
 
-### Adding New Agents
+- **Frontend**: Streamlit
+- **LLM Integration**: LangChain, LiteLLM
+- **Multi-Agent Framework**: CrewAI
+- **Database**: ChromaDB (vector database)
+- **LLM Models**: Google Gemini 1.5 Flash (configurable)
+- **Language**: Python 3.9+
 
-To add a new specialized agent:
+## Agent Ecosystem and Roles
 
-1. Create a new file in the `agents/` directory
-2. Define the agent class with appropriate methods
-3. Update the imports and agent initialization in `app.py`
+NexusForge implements a virtual development pod with five specialized AI agents:
 
-### Modifying the Workflow
+### 1. Project Lead Agent
+- **Role**: Coordinates the development team and project management
+- **Tasks**:
+  - Project initialization and scope definition
+  - Risk assessment and timeline planning
+  - Status reporting and milestone tracking
+  - Overall project coordination
 
-You can customize the development workflow by:
+### 2. Business Analyst Agent
+- **Role**: Translates business needs into technical requirements
+- **Tasks**: 
+  - Creating detailed user stories based on project requirements
+  - Refining user stories based on feedback
+  - Ensuring requirements are specific, measurable, achievable, relevant, and time-bound
 
-1. Adding or removing phases in the sidebar selection
-2. Modifying the tasks given to agents
-3. Creating new artifact types
+### 3. Designer Agent
+- **Role**: Creates comprehensive software design documentation
+- **Tasks**:
+  - Developing system architecture
+  - Creating data models and API designs
+  - Determining component interactions and interfaces
+  - Addressing non-functional aspects (scalability, security, performance)
 
-## Troubleshooting
+### 4. Developer Agent
+- **Role**: Implements code based on design specifications
+- **Tasks**:
+  - Writing clean, maintainable code
+  - Implementing functionality specified in user stories
+  - Code reviews and refinements
+  - Error handling and testing
 
-- **API Key Issues**: Ensure your API keys are correctly set in the `.env` file
-- **Memory Errors**: If you encounter memory issues with large projects, try reducing the model's temperature or tokens
-- **Missing Task Import**: If you encounter a "Task not defined" error, ensure you've imported `Task` from the crewai package
+### 5. Tester Agent
+- **Role**: Ensures software quality through comprehensive testing
+- **Tasks**:
+  - Creating detailed test plans and test cases
+  - Executing tests against implemented code
+  - Identifying bugs and quality issues
+  - Generating test execution reports
+
+## Dataflow and Agent Synchronization
+
+NexusForge implements a sequential workflow where agents collaborate through shared artifacts:
+
+1. **Project Initialization**:
+   - User provides requirements (text or PDF)
+   - Project Lead agent processes requirements and creates initialization document
+   - Initialization document defines scope, epics, and timeline
+
+2. **Requirements Analysis**:
+   - Business Analyst agent creates user stories from initialization document
+   - User stories are refined based on feedback
+   - Final user stories become input for Design phase
+
+3. **Design Phase**:
+   - Designer agent creates comprehensive design documentation based on user stories
+   - Design document is refined based on feedback
+   - Final design becomes input for Development phase
+
+4. **Development Phase**:
+   - Developer agent implements code based on user stories and design
+   - Code is refined based on feedback
+   - Final code implementation becomes input for Testing phase
+
+5. **Testing Phase**:
+   - Tester agent creates test plan based on user stories and design
+   - Tests are executed against the code implementation
+   - Test execution report is generated
+
+6. **Review Phase**:
+   - Project Lead agent reviews all artifacts and generates final report
+   - Project status and quality assessment is provided
+
+## RAG (Retrieval-Augmented Generation) Scope
+
+The NexusForge framework incorporates RAG capabilities through:
+
+1. **Artifact Storage**: All project artifacts are stored in ChromaDB with metadata
+2. **Contextual Generation**: Each new phase uses previous phase artifacts as context
+3. **Knowledge Retrieval**: Agents can retrieve relevant artifacts to inform their reasoning
+4. **Agent Memory**: Previous decisions and design choices are accessible throughout the project lifecycle
+
+The database manager (`db_manager.py`) handles:
+- Storing artifacts with metadata
+- Retrieving artifacts by ID or type
+- Updating artifacts with new versions
+- Supporting project continuity by maintaining a project knowledge base
+
+## Getting Started
+
+### Prerequisites
+
+- Python 3.9 or higher
+- Google API key for Gemini model access
+
+### Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/your-org/NexusForge_GENAI.git
+cd NexusForge_GENAI
+```
+
+2. Install dependencies:
+```bash
+pip install -r requirements.txt
+```
+
+3. Create a `.env` file with your API keys:
+```
+GEMINI_API_KEY=your_gemini_api_key
+```
+
+### Running the Application
+
+```bash
+streamlit run app.py
+```
+
+## Usage
+
+1. **Start a New Project**: 
+   - Enter project details and requirements or upload a PDF
+   - Initialize the project to generate a project plan
+
+2. **Generate User Stories**:
+   - Review and refine user stories created by the Business Analyst agent
+
+3. **Create Design Document**:
+   - Generate a comprehensive design document from the Designer agent
+   - Provide feedback to refine the design
+
+4. **Implement Code**:
+   - Let the Developer agent create code implementation
+   - Review and refine the code as needed
+
+5. **Test the Implementation**:
+   - Generate test plans and execute tests against the code
+   - Review test results and quality issues
+
+6. **Review the Project**:
+   - Get a complete project review and status report
+
+## Future Enhancements
+
+- Integration with version control systems (Git)
+- Support for additional LLM models
+- CI/CD pipeline generation
+- Expanded agent specializations (DevOps, Security, UX/UI)
+- Real-time collaborative editing
+- Advanced RAG techniques with semantic search
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-[MIT License](LICENSE)
+This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## Acknowledgments
 
-- Built with [Streamlit](https://streamlit.io/)
-- AI agents powered by [CrewAI](https://github.com/joaomdmoura/crewai)
-- Language models provided by Google's Gemini API
+- CrewAI for the multi-agent framework
+- LangChain for LLM integration capabilities
+- Streamlit for the interactive UI framework
+- Google for Gemini model access
