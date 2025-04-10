@@ -1,19 +1,19 @@
-# app.py
 import os
 import datetime
 import streamlit as st
 import uuid
+import io
 from dotenv import load_dotenv
 from crewai import Crew, Process, Task
 from database.db_manager import DatabaseManager
-from config import PROJECT_MANAGER_NAME
+import PyPDF2
+
 # Import agents
 from agents.project_lead import ProjectLeadAgent
 from agents.business_analyst import BusinessAnalystAgent
 from agents.designer import DesignerAgent
 from agents.developer import DeveloperAgent
 from agents.tester import TesterAgent
-
 
 # Load environment variables
 load_dotenv()
@@ -37,6 +37,14 @@ if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 if "current_phase" not in st.session_state:
     st.session_state.current_phase = "initialization"
+
+# Function to extract text from PDF
+def extract_text_from_pdf(pdf_file):
+    pdf_reader = PyPDF2.PdfReader(pdf_file)
+    text = ""
+    for page_num in range(len(pdf_reader.pages)):
+        text += pdf_reader.pages[page_num].extract_text()
+    return text
 
 @st.cache_resource
 def get_llm():
@@ -106,47 +114,119 @@ with tab1:
     if st.session_state.current_phase == "initialization":
         st.subheader("Project Initialization")
         
-        with st.form("project_init_form"):
-            project_name = st.text_input("Project Name")
-            project_description = st.text_area("Project Description")
-            business_requirements = st.text_area("Business Requirements", height=300)
-            
-            submitted = st.form_submit_button("Initialize Project")
-            
-            if submitted and business_requirements:
-                with st.spinner("Initializing project..."):
-                    # Get LLM and agents
-                    llm = get_llm()
-                    agents = initialize_agents(llm)
-                    
-                    # Create initialization task
-                    init_task = agents["project_lead"].create_initialization_task(business_requirements)
-                    
-                    # Create and run crew
-                    crew = create_crew(
-                        agents={"project_lead": agents["project_lead"]},
-                        tasks=[init_task]
-                    )
-                    result = crew.kickoff()
-                    
-                    # Store artifact
-                    artifact_id = f"project_init_{st.session_state.project_id}"
-                    db_manager.store_artifact(
-                        artifact_id=artifact_id,
-                        artifact_content=str(result),
-                        metadata={
-                            "type": "project_initialization",
-                            "project_id": st.session_state.project_id,
-                            "name": project_name
-                        }
-                    )
-                    
-                    # Update session state
-                    st.session_state.artifacts["project_initialization"] = result
-                    st.session_state.current_phase = "requirements"
-                    
-                    st.success("Project initialized successfully!")
-                    st.rerun()
+        # Create two columns for the tabs
+        init_tab1, init_tab2 = st.tabs(["Manual Entry", "Upload PDF"])
+        
+        # Manual Entry Tab
+        with init_tab1:
+            with st.form("project_init_form_manual"):
+                project_name = st.text_input("Project Name")
+                project_description = st.text_area("Project Description")
+                business_requirements = st.text_area("Business Requirements", height=300)
+                
+                submitted_manual = st.form_submit_button("Initialize Project")
+                
+                if submitted_manual and business_requirements and project_name:
+                    with st.spinner("Initializing project..."):
+                        # Get LLM and agents
+                        llm = get_llm()
+                        agents = initialize_agents(llm)
+                        
+                        # Create initialization task
+                        init_task = agents["project_lead"].create_initialization_task(business_requirements)
+                        
+                        # Create and run crew
+                        crew = create_crew(
+                            agents={"project_lead": agents["project_lead"]},
+                            tasks=[init_task]
+                        )
+                        result = crew.kickoff()
+                        
+                        # Store artifact
+                        artifact_id = f"project_init_{st.session_state.project_id}"
+                        db_manager.store_artifact(
+                            artifact_id=artifact_id,
+                            artifact_content=str(result),
+                            metadata={
+                                "type": "project_initialization",
+                                "project_id": st.session_state.project_id,
+                                "name": project_name,
+                                "description": project_description
+                            }
+                        )
+                        
+                        # Update session state
+                        st.session_state.artifacts["project_initialization"] = result
+                        st.session_state.current_phase = "requirements"
+                        
+                        st.success("Project initialized successfully!")
+                        st.rerun()
+        
+        # Upload PDF Tab
+        with init_tab2:
+            with st.form("project_init_form_pdf"):
+                project_name_pdf = st.text_input("Project Name")
+                project_description_pdf = st.text_area("Project Description")
+                uploaded_file = st.file_uploader("Upload Requirements Document (PDF)", type="pdf")
+                
+                submitted_pdf = st.form_submit_button("Initialize Project from PDF")
+                
+                if submitted_pdf and uploaded_file and project_name_pdf:
+                    with st.spinner("Processing PDF and initializing project..."):
+                        # Extract text from PDF
+                        pdf_text = extract_text_from_pdf(uploaded_file)
+                        
+                        if pdf_text:
+                            # Get LLM and agents
+                            llm = get_llm()
+                            agents = initialize_agents(llm)
+                            
+                            # Create initialization task
+                            init_task = agents["project_lead"].create_initialization_task(pdf_text)
+                            
+                            # Create and run crew
+                            crew = create_crew(
+                                agents={"project_lead": agents["project_lead"]},
+                                tasks=[init_task]
+                            )
+                            result = crew.kickoff()
+                            
+                            # Store artifacts
+                            artifact_id = f"project_init_{st.session_state.project_id}"
+                            db_manager.store_artifact(
+                                artifact_id=artifact_id,
+                                artifact_content=str(result),
+                                metadata={
+                                    "type": "project_initialization",
+                                    "project_id": st.session_state.project_id,
+                                    "name": project_name_pdf,
+                                    "description": project_description_pdf,
+                                    "source": "pdf_upload",
+                                    "filename": uploaded_file.name
+                                }
+                            )
+                            
+                            # Store original requirements
+                            pdf_artifact_id = f"requirements_pdf_{st.session_state.project_id}"
+                            db_manager.store_artifact(
+                                artifact_id=pdf_artifact_id,
+                                artifact_content=pdf_text,
+                                metadata={
+                                    "type": "original_requirements",
+                                    "project_id": st.session_state.project_id,
+                                    "filename": uploaded_file.name
+                                }
+                            )
+                            
+                            # Update session state
+                            st.session_state.artifacts["project_initialization"] = result
+                            st.session_state.artifacts["original_requirements"] = pdf_text
+                            st.session_state.current_phase = "requirements"
+                            
+                            st.success("Project initialized successfully from PDF!")
+                            st.rerun()
+                        else:
+                            st.error("Could not extract text from the PDF. Please check the file and try again.")
     
     # Requirements Analysis
     elif st.session_state.current_phase == "requirements":
@@ -155,6 +235,11 @@ with tab1:
         if "project_initialization" in st.session_state.artifacts:
             project_init = st.session_state.artifacts["project_initialization"]
             st.text_area("Project Initialization Document", project_init, height=200, disabled=True)
+            
+            # Display original requirements if available
+            if "original_requirements" in st.session_state.artifacts:
+                with st.expander("Original Requirements Document"):
+                    st.text_area("Original Requirements", st.session_state.artifacts["original_requirements"], height=300, disabled=True)
             
             if "user_stories" not in st.session_state.artifacts:
                 if st.button("Generate User Stories"):
@@ -336,9 +421,6 @@ with tab1:
             if "code_implementation" not in st.session_state.artifacts:
                 if st.button("Generate Code Implementation"):
                     with st.spinner("Generating code implementation..."):
-                        # Get LLM and agents
-                        # Continuing the app.py file
-
                         # Get LLM and agents
                         llm = get_llm()
                         agents = initialize_agents(llm)
