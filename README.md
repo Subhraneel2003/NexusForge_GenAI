@@ -205,6 +205,28 @@ streamlit run app.py
 - Real-time collaborative editing
 - Advanced RAG techniques with semantic search
 
+## Advanced Features
+
+### Context-Aware Chat System
+- Project Manager queries trigger retrieval of relevant artifacts.
+- Project Lead agent provides accurate responses using retrieved context.
+
+### Progressive Knowledge Refinement
+- User feedback enhances artifact quality over multiple refinement cycles.
+
+### Cross-Phase Knowledge Transfer
+- Ensures consistency across all phases of development by tracing requirements through design, implementation, and testing.
+
+---
+
+## Challenges Addressed
+
+1. **Context Window Limitations**: Intelligent chunking prioritizes relevant content for large projects.
+2. **Knowledge Consistency**: Centralized artifact storage ensures agents work with consistent information.
+3. **Retrieval Relevance**: Metadata enrichment optimizes semantic search accuracy.
+4. **User Experience Transparency**: Clear UI displays which documents influence current generation.
+  
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
