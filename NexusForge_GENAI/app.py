@@ -1,3 +1,11 @@
+import sys
+from sqlite_fix import fix_sqlite
+fix_sqlite()  
+try:
+    import pysqlite3
+    sys.modules["sqlite3"] = pysqlite3
+except ImportError:
+    pass
 import os
 import datetime
 import streamlit as st
