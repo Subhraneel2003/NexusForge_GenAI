@@ -217,7 +217,6 @@ streamlit run app.py
 ### Cross-Phase Knowledge Transfer
 - Ensures consistency across all phases of development by tracing requirements through design, implementation, and testing.
 
----
 
 ## Challenges Addressed
 
