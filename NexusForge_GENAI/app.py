@@ -658,7 +658,7 @@ with tab2:
             )
 # Chat Tab
 with tab3:
-    st.header(f"Chat with PROJECT MANAGER")
+    st.header(f"Chat with PROJECT LEAD")
     
     # Display chat history
     for message in st.session_state.chat_history:
