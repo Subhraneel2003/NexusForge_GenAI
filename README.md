@@ -152,7 +152,7 @@ The database manager (`db_manager.py`) handles:
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/your-org/NexusForge_GENAI.git
+git clone https://github.com/Subhraneel2003/NexusForge_GENAI.git
 cd NexusForge_GENAI
 ```
 
